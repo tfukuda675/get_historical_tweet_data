@@ -151,27 +151,36 @@ args    =   parser.parse_args()
 #____/ [*] Main                        \_________________________
 #
 pickup_words_set    =   yaml.safe_load(open(args.yaml))["search_words"]
-pickup_words_set    =   " OR ".join(pickup_words_set)
+#pickup_words_set    =   " OR ".join(pickup_words_set)
 #for tweet in tweepy.Cursor(api.search, q=pickup_words_set, tweet_mode='extended', result_type="mixed").items():
 #for tweet in tweepy.Cursor(api.search, q=pickup_words_set, tweet_mode='extended').items():
 
-tweet_df    =   pd.DataFrame()
 
-def tweet_hist_status(status_list=list(),until=None):
+def tweet_hist_status(words=list(),status_list=list(),until=None):
     if until == None:
         until   =   datetime.date.today()
 
     since   =   until - datetime.timedelta(days=1)
-    status  =   [s for s in tweepy.Cursor(api.search, q=pickup_words_set, tweet_mode='extended',include_entities=True,until=until,since=since).items()]
+    status  =   [s for s in tweepy.Cursor(api.search, q=words, tweet_mode='extended',include_entities=True,until=until,since=since).items()]
     status_list += status
     if len(status) != 0:
         until = until - datetime.timedelta(days=3)
-        tweet_hist_status(status_list=status_list,until=until)
+        tweet_hist_status(words=words,status_list=status_list,until=until)
 
     return status_list
 
-status_list = tweet_hist_status() 
+#status_list = tweet_hist_status()
+status_list = list()
+
+for word in pickup_words_set:
+    word    =   [word]
+    statuses = tweet_hist_status(words=word)
+    status_list += statuses
+
+
 df_columns           =   ["date","text","tw_type","created_at","user_id","tw_id","user_screen_name","tw_urls","tw_expanded_url","hashtags","tw_geo","tw_place","tw_lang"]
+
+tweet_df    =   pd.DataFrame()
 
 for tweet in status_list:
     '''
@@ -190,6 +199,8 @@ for tweet in status_list:
         text = tweet.full_text
     else:
         text = tweet.text
+
+    text    =   text.lower()
 
     user_id             =   tweet.user.id
     tw_id               =   tweet.id

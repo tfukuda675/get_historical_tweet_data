@@ -44,4 +44,4 @@ conn =   sqlite3.connect(args.sqlite3)
 tweet_df = pd.read_sql('SELECT * FROM pickup_tweets',conn)
 conn.close()
 
-print(tweet_df["text"])
+print(tweet_df[["text","date"]])
