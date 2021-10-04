@@ -1,0 +1,28 @@
+## python default
+__pycache__/
+*.py[cod]
+*$py.class
+db/
+*.yaml
+*.sqlite3
+
+
+## unuseful files in monitor_tweets work dir
+*.csv
+*.log
+#*.ipynb
+nohup.out
+memory_usage.txt
+*.old.*
+
+
+
+## for fukuda local pc
+.vscode/
+*.vscode
+*.sqlite3~
+*.swp
+work_*
+test_*
+work/
+test/
